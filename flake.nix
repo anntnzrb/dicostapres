@@ -72,6 +72,7 @@
           projectRootFile = "flake.nix";
           programs = {
             nixpkgs-fmt.enable = true;
+            prettier.enable = true;
             black.enable = true;
           };
           settings.formatter.isort = {

@@ -1,23 +1,24 @@
 # dicostapres
 
-`di`s`co`rd `sta`tus `pre`sence `s`ystem is minimal presence system for discord.
+`di`s`co`rd `sta`tus `pre`sence `s`ystem is a minimal presence system for discord.
 
 ## Prerequisites
 
-- Python 3.11+
+- Python `3.11+`
 - Poetry
 - Discord Token
 
 ### Nix
 
-This project is nix flakes ready. Just hook into the shell and install the
-dependencies using `poetry`.
+This project is [nix flakes](./flake.nix) ready. Just hook into the shell and
+install the dependencies using `poetry`.
 
 ## Installation
 
 1. `git clone` & `cd` into the repository
+
    ```sh
-   git clone 'https://github.com/anntnzrb/dicostapres'
+   git clone https://github.com/anntnzrb/dicostapres
    cd dicostapres/
    ```
 
@@ -25,8 +26,8 @@ dependencies using `poetry`.
    ```sh
    poetry install
    ```
-   
 3. Create the `.env` file by `cp`-ing the `.env.example` file
+
    ```sh
    cp ./.env.example ./.env
    ```
@@ -36,6 +37,7 @@ dependencies using `poetry`.
 ## Usage
 
 Run the app:
+
 ```sh
 just run
 ```
