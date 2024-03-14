@@ -36,7 +36,14 @@ install the dependencies using `poetry`.
 
 ## Usage
 
-Run the app:
+The `3`` environment variables that are required to set are:
+- `DISCORD_TOKEN` - The user's Discord token
+- `DISCORD_STATUS` - The status of the user. Can be `online`, `idle`, `dnd`
+- `DISCORD_STATUS_CUSTOM` - The custom status message
+
+### Running
+
+Simply execute `just run`:
 
 ```sh
 just run
