@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-- Python `3.11+`
+- Python `3.11`+
 - Poetry
 - Discord Token
 
@@ -36,7 +36,7 @@ install the dependencies using `poetry`.
 
 ## Usage
 
-The `3`` environment variables that are required to set are:
+The `3` environment variables that are required to set are:
 
 - `DISCORD_TOKEN` - The user's Discord token
 - `DISCORD_STATUS` - The status of the user. Can be `online`, `idle`, `dnd`
