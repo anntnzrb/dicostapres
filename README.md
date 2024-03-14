@@ -37,9 +37,10 @@ install the dependencies using `poetry`.
 ## Usage
 
 The `3`` environment variables that are required to set are:
+
 - `DISCORD_TOKEN` - The user's Discord token
 - `DISCORD_STATUS` - The status of the user. Can be `online`, `idle`, `dnd`
-- `DISCORD_STATUS_CUSTOM` - The custom status message
+- `DISCORD_STATUS_MSG` - The custom status message
 
 ### Running
 
@@ -54,7 +55,7 @@ variables are set manually. However, the `.env` method is preferred for less
 verbosity.
 
 ```
-DISCORD_TOKEN=Ujg5NzI3Nz... DISCORD_STATUS=online DISCORD_STATUS_CUSTOM='Playing with dicostapres' just run
+DISCORD_TOKEN=Ujg5NzI3Nz... DISCORD_STATUS=online DISCORD_STATUS_MSG='Playing with dicostapres' just run
 ```
 
 ## COPYING

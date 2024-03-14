@@ -20,7 +20,7 @@ class App:
             )
 
         self.status = os.getenv("DISCORD_STATUS", "online")
-        self.custom_status = os.getenv("DISCORD_STATUS_CUSTOM", "dicostapres")
+        self.custom_status = os.getenv("DISCORD_STATUS_MSG", "dicostapres")
         self.flask_app = FlaskApp()
         self.discord_bot = DiscordBot(self.token, self.status, self.custom_status)
 
