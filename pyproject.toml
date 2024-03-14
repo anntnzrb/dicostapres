@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "dicostapres"
+version = "1.0.0"
+description = "DIsCOrd STAtus PREsence System"
+authors = ["anntnzrb <anntnzrb@proton.me>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-dotenv = "^1.0.1"
+requests = "^2.31.0"
+websocket-client = "^1.7.0"
+flask = "^3.0.2"
+
+[tool.poetry.scripts]
+app = 'dicostapres.main:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
