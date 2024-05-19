@@ -1,46 +1,95 @@
 import os
-import sys
+import json
+import time
+import requests
+import websocket
+from flask import Flask
 from threading import Thread
-
 from dotenv import load_dotenv
 
-from .discord_bot import DiscordBot
-from .flask_app import FlaskApp
-
-# load environment variables from .env file
-load_dotenv()
-
-
-class App:
+class DiscordApp:
     def __init__(self):
+        load_dotenv()
         self.token = os.getenv("DISCORD_TOKEN")
-        if not self.token:
-            sys.exit(
-                "DISCORD_TOKEN environment variable is required. Set it in the .env file."
-            )
-
         self.status = os.getenv("DISCORD_STATUS", "online")
         self.custom_status = os.getenv("DISCORD_STATUS_MSG", "dicostapres")
-        self.flask_app = FlaskApp()
-        self.discord_bot = DiscordBot(self.token, self.status, self.custom_status)
+        self.headers = {"Authorization": self.token, "Content-Type": "application/json"}
+
+        if not self.token:
+            raise ValueError("Please add a token inside .env file.")
+
+        validate = requests.get("https://canary.discordapp.com/api/v9/users/@me", headers=self.headers)
+        if validate.status_code != 200:
+            raise ValueError("Your token might be invalid. Please check it again.")
+
+        userinfo = validate.json()
+        self.username = userinfo["username"]
+        self.discriminator = userinfo["discriminator"]
+        self.userid = userinfo["id"]
+
+        self.app = Flask('')
+        self.server = Thread(target=self.run_server)
+
+    def run_server(self):
+        @self.app.route('/')
+        def main():
+            return '<meta http-equiv="refresh" content="0; URL=https://github.com/anntnzrb/dicostapres"/>'
+        
+        self.app.run(host="0.0.0.0", port=8080)
+
+    def onliner(self):
+        ws = websocket.WebSocket()
+        ws.connect("wss://gateway.discord.gg/?v=9&encoding=json")
+        start = json.loads(ws.recv())
+        heartbeat = start["d"]["heartbeat_interval"]
+        auth = {
+            "op": 2,
+            "d": {
+                "token": self.token,
+                "properties": {
+                    "$os": "Windows 10",
+                    "$browser": "Google Chrome",
+                    "$device": "Windows",
+                },
+                "presence": {"status": self.status, "afk": False},
+            },
+            "s": None,
+            "t": None,
+        }
+        ws.send(json.dumps(auth))
+        cstatus = {
+            "op": 3,
+            "d": {
+                "since": 0,
+                "activities": [
+                    {
+                        "type": 4,
+                        "state": self.custom_status,
+                        "name": "Custom Status",
+                        "id": "custom",
+                    }
+                ],
+                "status": self.status,
+                "afk": False,
+            },
+        }
+        ws.send(json.dumps(cstatus))
+        ws.send(json.dumps({"op": 1, "d": "None"}))
+        time.sleep(heartbeat / 1000)
+
+    def run_onliner(self):
+        print(f"Logged in as {self.username}#{self.discriminator} ({self.userid}).")
+        while True:
+            self.onliner()
+            time.sleep(30)
 
     def run(self):
-        """Runs the application."""
-        Thread(target=self.flask_app.run).start()
-
-        user_info = self.discord_bot.fetch_user_info()
-        print(
-            f"Logged in as {user_info['username']}#{user_info['discriminator']} ({user_info['id']})."
-        )
-
-        self.discord_bot.setup_websocket_connection()
-        self.discord_bot.maintain_connection()
-
+        self.server.start()
+        self.run_onliner()
 
 def main():
-    app = App()
+    app = DiscordApp()
     app.run()
-
 
 if __name__ == "__main__":
     main()
