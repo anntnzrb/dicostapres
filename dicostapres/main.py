@@ -1,11 +1,13 @@
-import os
 import json
+import os
 import time
+from threading import Thread
+
 import requests
 import websocket
-from flask import Flask
-from threading import Thread
 from dotenv import load_dotenv
+from flask import Flask
+
 
 class DiscordApp:
     def __init__(self):
@@ -18,7 +20,9 @@ class DiscordApp:
         if not self.token:
             raise ValueError("Please add a token inside .env file.")
 
-        validate = requests.get("https://canary.discordapp.com/api/v9/users/@me", headers=self.headers)
+        validate = requests.get(
+            "https://canary.discordapp.com/api/v9/users/@me", headers=self.headers
+        )
         if validate.status_code != 200:
             raise ValueError("Your token might be invalid. Please check it again.")
 
@@ -27,11 +31,11 @@ class DiscordApp:
         self.discriminator = userinfo["discriminator"]
         self.userid = userinfo["id"]
 
-        self.app = Flask('')
+        self.app = Flask("")
         self.server = Thread(target=self.run_server)
 
     def run_server(self):
-        @self.app.route('/')
+        @self.app.route("/")
         def main():
             return '<meta http-equiv="refresh" content="0; URL=https://github.com/anntnzrb/dicostapres"/>'
         
@@ -87,9 +91,11 @@ class DiscordApp:
         self.server.start()
         self.run_onliner()
 
+
 def main():
     app = DiscordApp()
     app.run()
+
 
 if __name__ == "__main__":
     main()
