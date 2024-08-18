@@ -15,6 +15,7 @@ class DiscordApp:
         self.token = os.getenv("DISCORD_TOKEN")
         self.status = os.getenv("DISCORD_STATUS", "online")
         self.custom_status = os.getenv("DISCORD_STATUS_MSG", "dicostapres")
+        self.port = int(os.getenv("DICOSTAPRES_PORT", 6111))
         self.headers = {"Authorization": self.token, "Content-Type": "application/json"}
 
         if not self.token:
@@ -39,7 +40,7 @@ class DiscordApp:
         def main():
             return '<meta http-equiv="refresh" content="0; URL=https://github.com/anntnzrb/dicostapres"/>'
 
-        self.app.run(host="0.0.0.0", port=8089)
+        self.app.run(host="0.0.0.0", port=self.port)
 
     def onliner(self):
         ws = websocket.WebSocket()
