@@ -38,8 +38,8 @@ class DiscordApp:
         @self.app.route("/")
         def main():
             return '<meta http-equiv="refresh" content="0; URL=https://github.com/anntnzrb/dicostapres"/>'
-        
-        self.app.run(host="0.0.0.0", port=8080)
+
+        self.app.run(host="0.0.0.0", port=8089)
 
     def onliner(self):
         ws = websocket.WebSocket()
