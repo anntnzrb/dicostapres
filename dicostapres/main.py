@@ -45,8 +45,8 @@ class DiscordApp:
     def onliner(self):
         ws = websocket.WebSocket()
         ws.connect("wss://gateway.discord.gg/?v=9&encoding=json")
-        start = json.loads(ws.recv())
-        heartbeat = start["d"]["heartbeat_interval"]
+        heartbeat = json.loads(ws.recv())["d"]["heartbeat_interval"]
+
         auth = {
             "op": 2,
             "d": {
@@ -62,6 +62,7 @@ class DiscordApp:
             "t": None,
         }
         ws.send(json.dumps(auth))
+
         cstatus = {
             "op": 3,
             "d": {
