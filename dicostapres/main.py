@@ -18,6 +18,16 @@ class DiscordApp:
         self.port = int(os.getenv("DICOSTAPRES_PORT", 6111))
         self.headers = {"Authorization": self.token, "Content-Type": "application/json"}
 
+        self.validate_token()
+        self.userinfo = self.get_user_info()
+        self.username = self.userinfo["username"]
+        self.discriminator = self.userinfo["discriminator"]
+        self.userid = self.userinfo["id"]
+
+        self.app = Flask("")
+        self.server = Thread(target=self.run_server)
+
+    def validate_token(self):
         if not self.token:
             raise ValueError("Please add a token inside .env file.")
 
@@ -27,13 +37,11 @@ class DiscordApp:
         if validate.status_code != 200:
             raise ValueError("Your token might be invalid. Please check it again.")
 
-        userinfo = validate.json()
-        self.username = userinfo["username"]
-        self.discriminator = userinfo["discriminator"]
-        self.userid = userinfo["id"]
-
-        self.app = Flask("")
-        self.server = Thread(target=self.run_server)
+    def get_user_info(self):
+        validate = requests.get(
+            "https://canary.discordapp.com/api/v9/users/@me", headers=self.headers
+        )
+        return validate.json()
 
     def run_server(self):
         @self.app.route("/")
@@ -42,11 +50,12 @@ class DiscordApp:
 
         self.app.run(host="0.0.0.0", port=self.port)
 
-    def onliner(self):
+    def connect_websocket(self):
         ws = websocket.WebSocket()
         ws.connect("wss://gateway.discord.gg/?v=9&encoding=json")
-        heartbeat = json.loads(ws.recv())["d"]["heartbeat_interval"]
+        return ws
 
+    def send_auth(self, ws):
         auth = {
             "op": 2,
             "d": {
@@ -63,6 +72,7 @@ class DiscordApp:
         }
         ws.send(json.dumps(auth))
 
+    def send_custom_status(self, ws):
         cstatus = {
             "op": 3,
             "d": {
@@ -80,8 +90,17 @@ class DiscordApp:
             },
         }
         ws.send(json.dumps(cstatus))
+
+    def heartbeat(self, ws):
+        heartbeat_interval = json.loads(ws.recv())["d"]["heartbeat_interval"]
+        time.sleep(heartbeat_interval / 1000)
+
+    def onliner(self):
+        ws = self.connect_websocket()
+        self.send_auth(ws)
+        self.send_custom_status(ws)
         ws.send(json.dumps({"op": 1, "d": "None"}))
-        time.sleep(heartbeat / 1000)
+        self.heartbeat(ws)
 
     def run_onliner(self):
         print(f"Logged in as {self.username}#{self.discriminator} ({self.userid}).")
