@@ -35,14 +35,13 @@ class DiscordApp:
 
     def validate_token(self):
         try:
-            validate = requests.get(API_BASE_URL + "/users/@me", headers=self.headers)
+            validate = requests.get(f"{API_BASE_URL}/users/@me", headers=self.headers)
             validate.raise_for_status()
         except requests.RequestException as e:
-            self.logger.error(f"Token validation failed: {e}")
             raise ValueError(f"Token validation failed: {e}")
 
     def get_user_info(self):
-        validate = requests.get(API_BASE_URL + "/users/@me", headers=self.headers)
+        validate = requests.get(f"{API_BASE_URL}/users/@me", headers=self.headers)
         return validate.json()
 
     def run_server(self):
