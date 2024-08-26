@@ -8,6 +8,8 @@ import websocket
 from dotenv import load_dotenv
 from flask import Flask
 
+API_BASE_URL = "https://canary.discordapp.com/api/v9"
+WEBSOCKET_URL = "wss://gateway.discord.gg/?v=9&encoding=json"
 
 class DiscordApp:
     def __init__(self):
@@ -28,19 +30,14 @@ class DiscordApp:
         self.server = Thread(target=self.run_server)
 
     def validate_token(self):
-        if not self.token:
-            raise ValueError("Please add a token inside .env file.")
-
-        validate = requests.get(
-            "https://canary.discordapp.com/api/v9/users/@me", headers=self.headers
-        )
-        if validate.status_code != 200:
-            raise ValueError("Your token might be invalid. Please check it again.")
+        try:
+            validate = requests.get(API_BASE_URL + "/users/@me", headers=self.headers)
+            validate.raise_for_status()
+        except requests.RequestException as e:
+            raise ValueError(f"Token validation failed: {e}")
 
     def get_user_info(self):
-        validate = requests.get(
-            "https://canary.discordapp.com/api/v9/users/@me", headers=self.headers
-        )
+        validate = requests.get(API_BASE_URL + "/users/@me", headers=self.headers)
         return validate.json()
 
     def run_server(self):
@@ -52,7 +49,7 @@ class DiscordApp:
 
     def connect_websocket(self):
         ws = websocket.WebSocket()
-        ws.connect("wss://gateway.discord.gg/?v=9&encoding=json")
+        ws.connect(WEBSOCKET_URL)
         return ws
 
     def send_auth(self, ws):
