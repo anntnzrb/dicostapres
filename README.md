@@ -2,6 +2,19 @@
 
 `di`s`co`rd `sta`tus `pre`sence `s`ystem is a minimal presence system for discord.
 
+dicostapres is a tiny and lightweight Python script that allows you to:
+
+1. Set a custom online status for your Discord account
+2. Display a custom status message
+3. Keep your Discord account online 24/7
+
+## What This Project Is Not
+
+- A bot
+- A Python app which uses the discord.py library
+- Free from possible abandonment
+- Anything other than a toy project
+
 ## Prerequisites
 
 - Python `3.11`+
