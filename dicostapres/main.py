@@ -7,6 +7,7 @@ import requests
 import websocket
 from dotenv import load_dotenv
 from flask import Flask
+import logging
 
 API_BASE_URL = "https://canary.discordapp.com/api/v9"
 WEBSOCKET_URL = "wss://gateway.discord.gg/?v=9&encoding=json"
@@ -29,11 +30,15 @@ class DiscordApp:
         self.app = Flask("")
         self.server = Thread(target=self.run_server)
 
+        logging.basicConfig(level=logging.INFO)
+        self.logger = logging.getLogger(__name__)
+
     def validate_token(self):
         try:
             validate = requests.get(API_BASE_URL + "/users/@me", headers=self.headers)
             validate.raise_for_status()
         except requests.RequestException as e:
+            self.logger.error(f"Token validation failed: {e}")
             raise ValueError(f"Token validation failed: {e}")
 
     def get_user_info(self):
@@ -100,9 +105,12 @@ class DiscordApp:
         self.heartbeat(ws)
 
     def run_onliner(self):
-        print(f"Logged in as {self.username}#{self.discriminator} ({self.userid}).")
+        self.logger.info(f"Logged in as {self.username}#{self.discriminator} ({self.userid}).")
         while True:
-            self.onliner()
+            try:
+                self.onliner()
+            except Exception as e:
+                self.logger.error(f"Error in onliner: {e}")
             time.sleep(30)
 
     def run(self):
